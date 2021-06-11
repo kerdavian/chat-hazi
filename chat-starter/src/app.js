@@ -16,11 +16,11 @@ async function sendMessage(data) {
   console.log(res);
 }
 
-function displayMessage(message) {
+function displayMessage(message, id) {
 
   // olyan mintha alapértelmezetten a rendszer idő formátumát használná, így lehet, hogy hu-HU nem is kell
   const messageDOM = `
-      <div class="message">
+      <div class="message" data-id="${id}">
         <i class="fas fa-user"></i>
         <div>
           <span class="username">${message.username}
@@ -43,6 +43,11 @@ function displayMessage(message) {
     block: 'end'
   });
 
+  document.querySelector(`[data-id="${id}"] .fa-trash-alt`).addEventListener('click', () => {
+    removeMessage(id);
+    deleteMessages(id);
+  });
+
 }
 
 function createMessage() {
@@ -52,6 +57,16 @@ function createMessage() {
   // ha a változó neve ugyanaz mint a key amit létre akarunk hozni
   // az objectben akkor nem kell kétszer kiírni...
   return { message, username, date };
+}
+
+//UI-ról való törlés
+function removeMessage(id) {
+  document.querySelector(`[data-id="${id}"]`).remove();
+}
+
+//db-ből való törlés
+async function deleteMessages(id) {
+  await db.collection('messages').doc(id).delete();
 }
 
 
@@ -85,18 +100,19 @@ document.addEventListener('keyup', (event) => {
 });
 
 
+
 // listen for changes in the database
 db.collection('messages').orderBy('date', 'asc')
   .onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
-        displayMessage(change.doc.data());
+        displayMessage(change.doc.data(), change.doc.id);
       }
       if (change.type === 'modified') {
         console.log('Modified message: ', change.doc.data());
       }
       if (change.type === 'removed') {
-        console.log('Removed message: ', change.doc.data());
+        removeMessage(change.doc.id);
       }
     });
   });
