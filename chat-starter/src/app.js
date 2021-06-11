@@ -150,7 +150,7 @@ db.collection('messages').orderBy('date', 'asc')
         displayMessage(change.doc.data(), change.doc.id);
       }
       if (change.type === 'modified') {
-        console.log('modified!')
+        console.log('modified database!')
       }
       if (change.type === 'removed') {
         removeMessage(change.doc.id);
