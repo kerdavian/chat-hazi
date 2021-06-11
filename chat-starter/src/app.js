@@ -1,6 +1,7 @@
 import './index.html';
 import './scss/style.scss';
 import firebase from 'firebase/app';
+
 import 'firebase/firestore';
 import config from './db_config.js';
 import scrolIntoView from 'scroll-into-view-if-needed';
@@ -16,12 +17,14 @@ async function sendMessage(data) {
 }
 
 function displayMessage(message) {
+
+  // olyan mintha alapértelmezetten a rendszer idő formátumát használná, így lehet, hogy hu-HU nem is kell
   const messageDOM = `
       <div class="message">
         <i class="fas fa-user"></i>
         <div>
           <span class="username">${message.username}
-            <time>20:12 PM</time>
+            <time>${message.date.toDate().toLocaleString('hu-HU')}</time>
           </span>
           <br>
           <span class="message-text">
@@ -33,7 +36,7 @@ function displayMessage(message) {
           <i class="fas fa-pen"></i>
         </div>
       </div>
-  `; 
+  `;
   document.querySelector('#messages').insertAdjacentHTML('beforeend', messageDOM);
   scrolIntoView(document.querySelector('#messages'), {
     scrollMode: 'if-needed',
@@ -61,7 +64,7 @@ async function displayAllMessages() {
 
 function handleMessage() {
   const message = createMessage();
-  if(message.username && message.message) {
+  if (message.username && message.message) {
     sendMessage(message);
     // displayMessage(message);
   }
@@ -76,7 +79,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('keyup', (event) => {
-  if(event.key === 'Enter') {
+  if (event.key === 'Enter') {
     handleMessage();
   }
 });
