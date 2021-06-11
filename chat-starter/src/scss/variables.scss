@@ -1,0 +1,15 @@
+
+$base-color: #4a68ff;
+$white: #fff;
+// try out other base colors:
+// $base_color: grey;
+$dark-gradient: linear-gradient(355deg, darken($base_color, 19), darken($base_color, 20) 73%);
+$light-gradient: linear-gradient(90deg, $base_color, lighten($base_color, 5) 100%);
+
+$breakpoints: (
+	'smallphone': 390px,
+	'bigphone': 768px,
+	'tablet': 1024px,
+	'desktop': 1300px,
+	'big-desktop': 1500px
+);

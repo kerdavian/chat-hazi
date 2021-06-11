@@ -1,0 +1,75 @@
+.messages-container {
+	padding: 0 2rem;
+
+	@include media('>desktop') {
+		padding: 5rem 10rem;
+	}
+
+	@include media('<bigphone') {
+		padding: 0 1rem;
+	}
+
+	@include media('<smallphone') {
+		padding: 5px;
+	}
+}
+
+.messages {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	margin: 0;
+	width: 100%;
+
+	.message {
+		align-items: flex-start;
+		background: $light-gradient;
+		box-shadow: 0 -1px 32px -7px darken($base-color, 20);
+		color: $white;
+		display: flex;
+		font-size: 1.4rem;
+		line-height: 2rem;
+		// border-radius: 20px;
+		margin: 10px;
+		padding: 1rem;
+
+		@include media('<smallphone') {
+			font-size: 1rem;
+		}
+
+		&:last-child {
+			margin-bottom: 8rem;
+		}
+
+		.username {
+			font-weight: bold;
+		}
+
+		i {
+			margin: 5px 1rem 10px 10px;
+
+			@include media('<bigphone') {
+				margin: 3px 1rem 3px 0;
+			}
+		}
+
+		.fa-trash-alt,
+		.fa-pen {
+			cursor: pointer;
+			user-select: none;
+		}
+
+		time {
+			color: darken($white, 30);
+			font-weight: 200;
+			margin-left: 10px;
+		}
+
+		.message-edit-buttons {
+			display: flex;
+			margin-left: auto;
+			text-align: right;
+		}
+	}
+}
