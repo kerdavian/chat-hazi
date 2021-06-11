@@ -1,7 +1,7 @@
 import './index.html';
 import './scss/style.scss';
 import firebase from 'firebase/app';
-
+import './scss/edit-message-popup.scss';
 import 'firebase/firestore';
 import config from './db_config.js';
 import scrolIntoView from 'scroll-into-view-if-needed';
@@ -46,6 +46,11 @@ function displayMessage(message, id) {
   document.querySelector(`[data-id="${id}"] .fa-trash-alt`).addEventListener('click', () => {
     removeMessage(id);
     deleteMessages(id);
+  });
+
+  document.querySelector(`[data-id="${id}"] .fa-pen`).addEventListener('click', () => {
+    // console.log('klikk a szerkesztésre');
+    displayEditMessage(id);
   });
 
 }
@@ -99,7 +104,43 @@ document.addEventListener('keyup', (event) => {
   }
 });
 
+function displayEditMessage(id) {
+  const markup = /*html*/`
+  <div class="popup-container" id="popup">
+    <div class="edit-message" id="edit-message" data-id="${id}">
+      <div id="close-popup" class="button">
+        Close <i class="fa fa-window-close" aria-hidden="true"></i>
+      </div>
+      <textarea id="edit" name="" cols="30" rows="10">${document.querySelector(`.message[data-id="${id}"] .message-text`).textContent.trim()
+    }</textarea>
+      <div id="save-message" class="button">
+        Save message<i class="fas fa-save"></i>
+      </div>
+    </div>
+  </div>
+`;
+  document.querySelector('#app').insertAdjacentHTML('afterbegin', markup);
+  document.getElementById('close-popup').addEventListener('click', () => {
+    document.getElementById('popup').remove();
+  });
 
+  document.getElementById('save-message').addEventListener('click', () => {
+    const newMessage = document.querySelector('#edit').value;
+    // const id = document.querySelector('#edit-message').dataset.id;
+    modifyMessage(newMessage, id);
+  });
+
+}
+
+async function modifyMessage(newMessage, id) {
+  if (newMessage) {
+    await db.collection('messages').doc(id).update({
+      message: newMessage
+    });
+    document.querySelector(`.message[data-id="${id}"] .message-text`).textContent = newMessage;
+  }
+
+}
 
 // listen for changes in the database
 db.collection('messages').orderBy('date', 'asc')
@@ -109,7 +150,7 @@ db.collection('messages').orderBy('date', 'asc')
         displayMessage(change.doc.data(), change.doc.id);
       }
       if (change.type === 'modified') {
-        console.log('Modified message: ', change.doc.data());
+        console.log('modified!')
       }
       if (change.type === 'removed') {
         removeMessage(change.doc.id);
